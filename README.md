@@ -1,1 +1,2 @@
-# brand_analyers
+# FinalProject
+CSCI576 Final Project
