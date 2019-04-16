@@ -64,3 +64,7 @@ About the dataset folder: (you can download from Google Driver as shown in datas
   "Brand Images" folder: 
     Include brand/logo images in rgb format with 480*270 as resolution. 
 	The BMP files are only for your reference to review the images and you should use the .rgb files.
+	
+	
+## Compile and Run Audio Video Sync Code :
+java Player ~/Downloads/Starbucks_Ad_15s.rgb ~/Downloads/Starbucks_Ad_15s.wav
