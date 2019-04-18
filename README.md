@@ -1,5 +1,14 @@
 # FinalProject
 CSCI576 Final Project
+# Testing Audio Video Sycn code 
+```C++
+javac *java 
+```
+> Run
+```C++
+java Player  ~/Downloads/Subway_Ad_15s.rgb ~/Downloads/Subway_Ad_15s.wav
+```
+
 
 ## Motivation 
 > There is an increased amount of video and audio content broadcast and streamed everywhere today. Such content needs to be frequently analyzed for a variety of reasons and applications – such as searching, indexing, summarizing, etc. One general area is in modifying content is to remove/replace specific parts of frames or even a number of frames altogether
