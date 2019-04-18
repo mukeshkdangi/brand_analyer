@@ -4,185 +4,156 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.ArrayList;
-import java.util.List;
 
 import javax.swing.*;
 
-public class VideoPlayer {
-    private static String filename = "";
 
-    private static int analysis = 0;
-    private static int antiAliasing = 0;
+public class VideoPlayer implements Runnable {
+    private int currentFrame;
 
-    private static float scaleHeight = 1.0f;
-    private static float scaleWidth = 1.0f;
+    private AudioPlayer audioPlayer;
+    private static InputStream inputStream;
+    private byte[] bytes;
+    private String videoFileName;
 
-    private static float fps = 10.0f;
-    static int IMAGE_TYPE = BufferedImage.TYPE_INT_RGB;
+    private static final Object lock = new Object();
 
-    private static int originalWidth = 960;
-    private static int originalHeighht = 540;
+    private static boolean suspended;
+    private static boolean stop;
 
-    private static void preProcessing(String[] args) {
-        filename = args[0];
+    static BufferedImage bufferedImage;
+
+    public VideoPlayer(String videoFilename, AudioPlayer playSound) {
+        this.videoFileName = videoFilename;
+        this.audioPlayer = playSound;
     }
 
-    public static void main(String[] args) {
-        preProcessing(args);
-        GraphicalUserInterface graphicalUserInterface = new GraphicalUserInterface();
-
-        int modifiedWidth = originalWidth;
-        int modifiedHeight = originalHeighht;
-
-        boolean isScaled = false;
-
-        //Update the new width
-        if (scaleWidth < 1.0) {
-            modifiedWidth = (int) Math.floor(scaleWidth * originalWidth);
-            isScaled = true;
-        }
-
-        //Update the new getHeight
-        if (scaleHeight < 1.0) {
-            modifiedHeight = (int) Math.floor(scaleHeight * originalHeighht);
-            isScaled = true;
-        }
-
-
-        VideoFrameController videoCapture = new VideoFrameController(filename, originalWidth, originalHeighht);
-        ImageInfo originalFrame = new ImageInfo(originalWidth, originalHeighht, IMAGE_TYPE);
-        ImageInfo modifiedFrame = new ImageInfo(modifiedWidth, modifiedHeight, IMAGE_TYPE);
-
-        videoCapture.openFile();
-        int totalFrames = videoCapture.getNumOfFrames();
-
-
-        if (!videoCapture.isFileOpened()) {
-            System.err.println("Unable to open the vidoe stream .... for file : " + filename);
-            return;
-        }
-
-        if (scaleHeight > 1 && scaleWidth > 1 && analysis == 2) {
-            System.out.println("Seam carving uses to reduce the image size based on energy of the pixels. scaling up is  not possible");
-            return;
-        }
-
-        List<BufferedImage> video = new ArrayList<BufferedImage>();
-        int frameCounter = 1;
-
-        System.out.println("Processing " + filename + "...Please Wait");
-        while (videoCapture.readContent(originalFrame)) {
-            System.out.print(".");
-
-            ImageInfo.resize(originalFrame, modifiedFrame, scaleWidth, scaleHeight, antiAliasing, analysis);
-            video.add(modifiedFrame.copyData());
-
-            frameCounter++;
-        }
-        System.out.println("\nTotal Frames ......" + video.size());
-        System.out.println("Started showing Frames ......");
-        long initialTime = System.currentTimeMillis();
-        long sleep = (long) Math.floor((double) 1000 / fps);
-        for (int idx = 0; idx < video.size(); idx++) {
-            graphicalUserInterface.showFrame(video.get(idx), idx);
-            try {
-                Thread.sleep(sleep);
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }
-        }
-        long endTime = System.currentTimeMillis();
-        System.out.println("Done.......Total Time took to display  " + video.size() + " frames is(sec) " + (endTime - (initialTime + (video.size() * sleep) / 1000)) / 1000);
-    }
-}
-
-class GraphicalUserInterface {
-    private JFrame window;
-    private JLabel label;
-
-    public GraphicalUserInterface() {
-        this.label = new JLabel();
-
-        this.window = new JFrame();
-        window.getContentPane().add(label, BorderLayout.CENTER);
-        window.pack();
-        window.setVisible(true);
-    }
-
-    public void showFrame(BufferedImage bufferedImage, int frameCount) {
-        this.label.setIcon(new ImageIcon(bufferedImage));
-        window.pack();
-    }
-}
-
-
-class VideoFrameController {
-    private byte[] vidFrameData;
-    private String filename;
-    private boolean isFileOpened;
-
-    private int width;
-    private int colorModel;
-    private int height;
-
-
-    private int length;
-    private InputStream inputStream;
-    private int perFrameDataLength;
-    private int numOfFrames;
-
-
-    public boolean retrieveFrame(ImageInfo frame) {
-        frame.setBufferedImage(this.vidFrameData);
-        return true;
-    }
-
-    public boolean readContent(ImageInfo imageInfo) {
-        return grabFrame() ? retrieveFrame(imageInfo) : false;
-    }
-
-    public void openFile() {
-        File file = new File(this.filename);
+    @Override
+    public void run() {
         try {
-            this.inputStream = new FileInputStream(file);
-        } catch (Exception e) {
+            playVideo();
+        } catch (InterruptedException e) {
             e.printStackTrace();
         }
-        this.length = (int) file.length();
-        this.perFrameDataLength = this.height * this.width * 3;
-        this.numOfFrames = this.length / perFrameDataLength;
-        isFileOpened = true;
     }
 
-    public VideoFrameController(String filename, int width, int height) {
-        this.width = width;
-        this.height = height;
-        this.colorModel = BufferedImage.TYPE_INT_RGB;
-        this.filename = filename;
-    }
+    public void playVideo() throws InterruptedException {
 
-    public boolean grabFrame() {
+        currentFrame = 0;
+
+        bufferedImage = new BufferedImage(Constants.WIDTH, Constants.HEIGHT, BufferedImage.TYPE_INT_RGB);
+
         try {
-            int offset = 0, numRead = 0;
-            this.vidFrameData = new byte[this.perFrameDataLength];
-            while (offset < this.vidFrameData.length &&
-                    (numRead = this.inputStream.read(this.vidFrameData, offset, this.vidFrameData.length - offset)) >= 0) {
-                offset = offset + numRead;
+            File videoFile = new File(videoFileName);
+            inputStream = new FileInputStream(videoFile);
+            long numberOfFrames = videoFile.length() / Constants.PIXELS_PER_FRAME;
+            bytes = new byte[(int) Constants.PIXELS_PER_FRAME];
+
+            PlayVideoComponent component = new PlayVideoComponent();
+            double numberOfSamplesPerFrame = audioPlayer.getSampleRate() / 30;
+
+            int offset = 0;
+            int counter = 0;
+            double frameMovementDifference = Math.round(audioPlayer.getFramePosition()) / numberOfSamplesPerFrame;
+
+            if (!isStop()) {
+                while (counter < frameMovementDifference) {
+                    processFrameAhead(component);
+                    counter++;
+                }
+
+                for (int nextFrameCounter = counter; nextFrameCounter < numberOfFrames; nextFrameCounter++) {
+                    while (nextFrameCounter < frameMovementDifference) {
+                        processFrameAhead(component);
+                        nextFrameCounter++;
+                    }
+                    processFrameAhead(component);
+                }
             }
-            return numRead > 0 ? true : false;
         } catch (IOException e) {
             e.printStackTrace();
-            return false;
         }
     }
 
-    public boolean isFileOpened() {
-        return this.isFileOpened;
+    private void processFrameAhead(PlayVideoComponent component) {
+        readBytes();
+        component.setImg(bufferedImage);
+        Player.controlOptionPanel.add(component);
+        Player.controlOptionPanel.repaint();
+        Player.controlOptionPanel.setVisible(true);
     }
 
-    public int getNumOfFrames() {
-        return numOfFrames;
+    private void readBytes() {
+        currentFrame++;
+        synchronized (this) {
+            while (suspended) {
+                Thread.interrupted();
+            }
+        }
+
+        try {
+            int offset = 0;
+            int numRead = 0;
+
+            while (offset < bytes.length && (numRead = inputStream.read(bytes, offset, bytes.length - offset)) >= 0) {
+                offset += numRead;
+            }
+            int ind = 0;
+            for (int y = 0; y < Constants.HEIGHT; y++) {
+                for (int x = 0; x < Constants.WIDTH; x++) {
+                    byte r = bytes[ind];
+                    byte g = bytes[ind + Constants.HEIGHT * Constants.WIDTH];
+                    byte b = bytes[ind + Constants.HEIGHT * Constants.WIDTH * 2];
+
+                    int pix = 0xff000000 | ((r & 0xff) << 16) | ((g & 0xff) << 8) | (b & 0xff);
+                    bufferedImage.setRGB(x, y, pix);
+                    ind++;
+                }
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
+    public static boolean isStop() {
+        return stop;
+    }
+
+    public static void stop() {
+        try {
+            inputStream.close();
+            stop = true;
+            System.exit(0);
+
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public static void suspend() {
+        suspended = true;
+    }
+
+    public static void resume() {
+        synchronized (lock) {
+            suspended = false;
+            lock.notify();
+        }
+    }
+
+
+    public class PlayVideoComponent extends JComponent {
+
+        private BufferedImage img;
+
+        public void paintComponent(Graphics g) {
+            Graphics2D g2 = (Graphics2D) g;
+            g2.drawImage(img, 0, 0, this);
+        }
+
+        public void setImg(BufferedImage img) {
+            this.img = img;
+        }
+
+    }
 }
