@@ -8,6 +8,12 @@ public class Player {
     static JFrame controlOptionPanel;
 
 
+    public static void ProcessAudioVideo(String videoFileName, String audioFileName) {
+
+
+    }
+
+
     public static void main(String[] args) {
 
         controlOptionPanel = new JFrame();
@@ -59,10 +65,6 @@ public class Player {
     }
 
 
-    public static void ProcessAudioVideo(String videoFileName, String audioFileName) {
-
-
-    }
 
 
 }
