@@ -1,38 +1,22 @@
 package csci576;
 
-import java.awt.Toolkit;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
 import org.openimaj.image.MBFImage;
-import org.openimaj.image.colour.RGBColour;
 import org.openimaj.image.pixel.statistics.HistogramModel;
-import org.openimaj.image.processing.resize.ResizeProcessor;
-import org.openimaj.image.renderer.MBFImageRenderer;
 import org.openimaj.video.VideoDisplay;
 import org.openimaj.video.xuggle.XuggleVideo;
 
-import com.lowagie.text.Rectangle;
-
 import org.openimaj.math.geometry.point.Point2d;
-import org.openimaj.math.geometry.shape.Shape;
 import org.openimaj.math.statistics.distribution.MultidimensionalHistogram;
 import org.openimaj.video.VideoDisplayListener;
 import org.openimaj.video.processing.motion.GridMotionEstimator;
 import org.openimaj.video.processing.motion.MotionEstimator;
 import org.openimaj.video.processing.motion.MotionEstimatorAlgorithm;
-import org.openimaj.video.processing.shotdetector.CombiShotDetector;
-import org.openimaj.video.processing.shotdetector.HistogramVideoShotDetector;
-import org.openimaj.video.processing.shotdetector.LocalHistogramVideoShotDetector;
-import org.openimaj.video.processing.shotdetector.ShotBoundary;
-import org.openimaj.video.processing.shotdetector.ShotDetectedListener;
-import org.openimaj.video.processing.shotdetector.VideoKeyframe;
-import org.openimaj.video.timecode.VideoTimecode;
 import org.openimaj.video.translator.FImageToMBFImageVideoTranslator;
 import org.openimaj.video.translator.MBFImageToFImageVideoTranslator;
-import org.openimaj.demos.video.VideoShotDetectorVisualisation;
-import org.openimaj.feature.DoubleFV;
 import org.openimaj.feature.DoubleFVComparison;
 import org.openimaj.image.DisplayUtilities;
 import org.openimaj.image.FImage;
@@ -171,8 +155,9 @@ public class App {
 				float lastShotStart = outputList.get(outputList.size() - 1);
 				
 				System.out.println("Frames in between: " + (lastFrameNo - lastShotStart));
+				float framesInBetween = lastFrameNo - lastShotStart;
 				
-				if ((lastFrameNo - lastShotStart) >  minFrames) {
+				if (framesInBetween >  minFrames) {
 				
 					System.out.println("New Shot detected");
 					DisplayUtilities.displayName(current, "debug: Current Frame");
@@ -199,7 +184,7 @@ public class App {
 		return outputList;
 		
 	}
-	
+		
 
     public static void main( String[] args ) {
 
