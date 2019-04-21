@@ -21,11 +21,6 @@ public class AudioPlayer implements Runnable {
         this.waveStream = waveStream;
     }
 
-    @Override
-    public void run() {
-        this.playAudioVideoTogether();
-    }
-
     public void playAudioVideoTogether() {
         AudioInputStream audioInputStream = null;
         try {
@@ -48,6 +43,11 @@ public class AudioPlayer implements Runnable {
     public float getSampleRate() {
         System.out.println(audioFormat);
         return audioFormat.getFrameRate();
+    }
+
+    @Override
+    public void run() {
+        this.playAudioVideoTogether();
     }
 
     public static void pauseAudio() {
