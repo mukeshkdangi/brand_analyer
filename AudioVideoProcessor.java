@@ -341,5 +341,76 @@ public class AudioVideoProcessor {
         System.out.println("removing ad audio...");
       //  removeAdsFromAudio(audiopath, audioout, shots);
     }
+ 
+ private static processShotLabelingFromAudioMetrics(List<Shot> shots){
+        for (int index = 0; index < shots.size(); ++index) {
+            Set<Category> neighbors = new HashSet<Category>();
+            if (index != 0) {
+                neighbors.add(shots.get(index - 1).category);
+            }
+            if (index != shots.size() - 1) {
+
+                neighbors.add(shots.get(index + 1).category);
+            }
+
+            if (shots.get(index).category == Category.EITHER || shots.get(index).category == Category.ADVRT) {
+                // If both are NO_ADVRT
+                if (neighbors.contains(Category.NO_ADVRT) && neighbors.size() == 1) {
+                    shots.get(index).category = Category.NO_ADVRT;
+                }
+                // If both are ADVRT
+                else if (neighbors.contains(Category.ADVRT) && neighbors.size() == 1) {
+                    shots.get(index).category = Category.ADVRT;
+                }
+            }
+
+        }
+
+        // Pruning Stage 2: Compare average amplitudes with neighbors frames. Choose closest
+        // neighbor, with least avgAmp difference
+        for (int index = 0; index < shots.size(); ++index) {
+            if (index != 0 && shots.get(index).category == Category.EITHER) {
+                if (Math.abs(shots.get(index).avgAmp - shots.get(index - 1).avgAmp) <= 0.01) {
+                    shots.get(index).category = shots.get(index - 1).category;
+                }
+            }
+
+            if (index != shots.size() - 1 && shots.get(index).category == Category.EITHER) {
+                if (Math.abs(shots.get(index).avgAmp - shots.get(index + 1).avgAmp) <= 0.01) {
+                    shots.get(index).category = shots.get(index + 1).category;
+                }
+            }
+        }
+
+        // Pruning Stag 3: Compare audio shot signChangeFreq .
+        for (int index = 1; index < shots.size() - 1; ++index) {
+            if (shots.get(index).category == Category.EITHER) {
+                if (Math.abs(shots.get(index).signChangeFreq - shots.get(index - 1).signChangeFreq) < Math
+                        .abs(shots.get(index).signChangeFreq - shots.get(index + 1).signChangeFreq)) {
+                    shots.get(index).category = shots.get(index - 1).category;
+                } else {
+                    shots.get(index).category = shots.get(index+ 1).category;
+                }
+            }
+        }
+
+        for (int index = 0; index < shots.size(); ++index) {
+            if (shots.get(index).category == Category.EITHER) {
+                for (int j = 1; j <= shots.size(); ++j) {
+                    if (index - j >= 0) {
+                        if (shots.get(j).category != Category.EITHER) {
+                            shots.get(index).category = shots.get(j).category;
+                            break;
+                        }
+                    }
+                    if (index + j < shots.size()) {
+                        if (shots.get(j).category != Category.EITHER) {
+                            shots.get(index).category = shots.get(j).category;
+                            break;
+                        }
+                    }
+                }
+            }
+        }
 
 }
