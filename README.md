@@ -4,9 +4,14 @@ CSCI576 Final Project
 ```C++
 javac *java 
 ```
-> Run
+> Run Audio Video Sync
 ```C++
 java Player  ~/Downloads/Subway_Ad_15s.rgb ~/Downloads/Subway_Ad_15s.wav
+```
+
+> Run logo Detection and Ad replacement Algo
+``` C++
+java AudioVideoProcessor /Users/mukesh/Downloads/dataset/Videos/data_test3.rgb /Users/mukesh/Downloads/dataset/Videos/data_test3.wav  /Users/mukesh/Downloads/dataset/Videos/video3.rgb /Users/mukesh/Downloads/dataset/Videos/audio3.wav
 ```
 
 
