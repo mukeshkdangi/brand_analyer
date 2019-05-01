@@ -27,6 +27,9 @@ java Player  ~/Downloads/Subway_Ad_15s.rgb ~/Downloads/Subway_Ad_15s.wav
 > Run logo Detection and Ad replacement Algo
 ``` C++
 java AudioVideoProcessor /Users/mukesh/Downloads/dataset/Videos/data_test3.rgb /Users/mukesh/Downloads/dataset/Videos/data_test3.wav  /Users/mukesh/Downloads/dataset/Videos/video3.rgb /Users/mukesh/Downloads/dataset/Videos/audio3.wav
+
+java -jar target/dangi-1.0-SNAPSHOT-jar-with-dependencies.jar Player ~/Downloads/Subway_Ad_15s.rgb ~/Downloads/Subway_Ad_15s.wav ~/Downloads/Subway_Ad_15s2.rgb ~/Downloads/Subway_Ad_15s2.wav
+
 ```
 
 ## Motivation 
