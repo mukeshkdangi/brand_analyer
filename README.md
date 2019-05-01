@@ -3,6 +3,7 @@
 
 ## Problem Statement
 > Design an  develope a System to automatically remove advertisements from the video (and corresponding audio) which is interspersed with advertisements. Furthermore, design a process based on specific brand images to detect the brand in the video and if present, replace the original advertisement with a corresponding topical advertisement.
+
 a. Remove ads from Video
 b. Replace ads with relevant ads which are determined by the logos detections from the video
 
