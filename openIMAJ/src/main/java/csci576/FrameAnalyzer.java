@@ -1,6 +1,7 @@
 package csci576;
 
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -15,6 +16,7 @@ import javax.sound.sampled.UnsupportedAudioFileException;
 import org.openimaj.feature.DoubleFVComparison;
 import org.openimaj.image.DisplayUtilities;
 import org.openimaj.image.FImage;
+import org.openimaj.image.ImageUtilities;
 import org.openimaj.image.MBFImage;
 import org.openimaj.image.pixel.statistics.HistogramModel;
 import org.openimaj.math.geometry.point.Point2d;
@@ -27,6 +29,8 @@ import org.openimaj.video.processing.motion.MotionEstimatorAlgorithm;
 import org.openimaj.video.translator.FImageToMBFImageVideoTranslator;
 import org.openimaj.video.translator.MBFImageToFImageVideoTranslator;
 import org.openimaj.video.xuggle.XuggleVideo;
+
+import com.google.protobuf.ByteString;
 
 import csci576.Shot.Category;
 
@@ -117,7 +121,7 @@ public class FrameAnalyzer {
 	 * 
 	 */
 
-	public static List<Shot> detectShotBoundaries(XuggleVideo video, float threshold, int minFrames, Boolean verbose) {
+	public static List<Shot> detectShotBoundaries(XuggleVideo video, float threshold, int minFrames, Boolean verbose) throws IOException, Exception {
 
 		// Get the first frame
 		MBFImage lastFrame = video.getNextFrame();
@@ -133,7 +137,9 @@ public class FrameAnalyzer {
 
 		// Initialize output list
 		List<Shot> outputList = new ArrayList<Shot>();
-
+		LogoDetection ld = new LogoDetection();
+		List<String> logos = ld.run();
+		
 		// Iterate through the frames
 		for (final MBFImage currentFrame : video) {
 			final FImage current = currentFrame.flatten();
@@ -145,9 +151,16 @@ public class FrameAnalyzer {
 
 			if (currentFrameNo % 20 == 0) {
 				//Call Logo detector here 
-				byte[] currentBytes = current.toByteImage();
+				System.out.println("20th frame!!!");
+				File outputFile = new File("/Users/skalli93/Desktop/temp.jpg");
+				ImageUtilities.write(current, "JPG", outputFile);
+				ByteString byteString = ByteString.readFrom(new FileInputStream(outputFile));
 				
+				//byte[] currentBytes = currentFrame.toByteImage();
+				//ByteString byteString = ByteString.copyFrom(currentBytes);
+				LogoDetection.matchLogoToImage(null, System.out, logos, byteString);
 			}
+			
 			
 			// Might need adjust threshold:
 			if (meanVal > threshold && distanceScore > threshold) {

@@ -1,3 +1,5 @@
+package csci576;
+
 import java.util.List;
 import java.awt.image.BufferedImage;
 import java.io.ByteArrayOutputStream;
@@ -49,11 +51,11 @@ public class LogoDetection
 		    }
 		  }
 	  
-	  public static List<String> matchLogoToImage(String filePath, PrintStream out, List<String> logos, BufferedImage img) throws Exception, IOException {
+	  public static List<String> matchLogoToImage(String filePath, PrintStream out, List<String> logos, ByteString imgBytes) throws Exception, IOException {
 		   List<AnnotateImageRequest> requests = new ArrayList<>();
 		   List<String> matched = new ArrayList<>();
 		   
-		   ByteString imgBytes = ByteString.readFrom(new FileInputStream(filePath));
+		   //ByteString imgBytes = ByteString.readFrom(new FileInputStream(filePath));
 		   //ByteString imgBytes = ByteString.readFrom(img);
 
 		   try{
@@ -129,19 +131,19 @@ public class LogoDetection
 		  }
 	  }
 	  
-    public static List<String> run(String args[])
+    public static List<String> run()
     {
     	//you'll obviously need to change this - this is just where I put the given dataset folder
-    	String path = "\\D:\\My Computer\\USC\\MM2\\12345\\src\\main\\java\\finalproj\\proj\\dataset\\";
+    	String path = "/Users/skalli93/Desktop/USC Documents/CSCI576/finalProject/dataset/Brand Images/";
     	String framePath = "C:\\Users\\Kayleigh\\Desktop\\";
     	try {
     		List<String> logos = new ArrayList<>();  
-    		File dir = new File(path + "Brand Images");
+    		File dir = new File(path);
     		  File[] directoryListing = dir.listFiles();
     		  if (directoryListing != null) {
     		    for (File child : directoryListing) {
     		    	if(child.getName().contains(".bmp") || child.getName().contains(".jpg")) {
-    		    		logos.add(detectLogos(path + "Brand Images\\" + child.getName(), System.out));
+    		    		logos.add(detectLogos(path + child.getName(), System.out));
     		    	}
     		    }
     		    

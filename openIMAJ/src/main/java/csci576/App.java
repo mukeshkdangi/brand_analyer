@@ -39,7 +39,7 @@ public class App {
 	
 	//Use some metric of audio to tell if advertisement
 	
-    public static void main( String[] args ) throws UnsupportedAudioFileException, IOException {
+    public static void main( String[] args ) throws Exception {
 
     	XuggleVideo video = new XuggleVideo(new File("/Users/skalli93/Desktop/USC Documents/CSCI576/finalProject/dataset/Videos/data_test1_cmp.avi"));
     	//XuggleVideo video = new XuggleVideo(new File("/Users/skalli93/Desktop/USC Documents/CSCI576/finalProject/dataset/Videos/data_test1_cmp.avi"));
@@ -52,8 +52,6 @@ public class App {
     		System.out.println("EndFrameNo: " + shot.getEndFrameNumber() + ", framesInBetween: " + shot.getShotLength() + ", MSD: " + shot.getMSD() 
     		+ ", Hist Score: " + shot.gethistogramScore() +", Category " + shot.category);
    	    }
-    	
-    	
     	    
     	String audioPath = "/Users/skalli93/Desktop/USC Documents/CSCI576/finalProject/dataset/Videos/data_test1.wav";
     	
@@ -65,7 +63,6 @@ public class App {
     		System.out.println("EndFrameNo: " + shot.getEndFrameNumber() + ", framesInBetween: " + shot.getShotLength() + ", MSD: " + shot.getMSD() 
     		+ ", Hist Score: " + shot.gethistogramScore() +", Category " + shot.category);
    	    }
-    	
     	
     	
     	//FrameAnalyzer.audioAnalyzer(shotList, audio, 2048f);
