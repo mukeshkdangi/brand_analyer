@@ -117,9 +117,7 @@ public class FrameAnalyzer {
 
         long numOfFrames = video.countFrames();
         List<String> logos = LogoDetection.run(path);
-        logos.stream().forEach(x->{
-            System.out.println("logo Found  in folder " + x);
-        });
+       
         
         // Iterate through the frames
         for (MBFImage currentFrame : video) {

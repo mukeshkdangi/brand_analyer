@@ -111,10 +111,12 @@ public class LogoDetection
                                 if(description.contains("hard rock")){
                                     matched.add("hard rock live");
                                 }
+                                
                             }
                         }
                         
                       }
+                      
                       return matched;
                     }
                         
@@ -150,7 +152,6 @@ public class LogoDetection
             Files.walk( Paths.get(path))
             .filter(s -> s.toString().endsWith(".bmp"))
             .map(Path::getFileName)
-            .sorted()
             .collect(Collectors.toList()).stream().forEach(x->{
                 try {
                     logos.add(detectLogos(path + x.getFileName().toString(), System.out));

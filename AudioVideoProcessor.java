@@ -613,9 +613,9 @@ public class AudioVideoProcessor {
             "/Users/mukesh/Downloads/dataset/Videos/data_test2_cmp.avi",
             "/Users/mukesh/Downloads/dataset/Videos/data_test3_cmp.avi"
                                         };
-    public static String[] brandImages  = {"/Users/mukesh/Downloads/dataset3/BrandImages/",
-            "/Users/mukesh/Downloads/dataset2/⁨BrandImages/⁩",
-            "/Users/mukesh/Downloads/dataset3/⁨BrandImages/⁩"
+    public static String[] brandImages  = {"/Users/mukesh/Downloads/dataset/BrandImages",
+            "/Users/mukesh/Downloads/dataset2/BrandImages",
+            "/Users/mukesh/Downloads/dataset3/⁨BrandImages"
     };
     
 
@@ -627,7 +627,7 @@ public class AudioVideoProcessor {
         //Get input file name
         String videoout = "video.rgb";
         String audioout = "audio.wav";
-        boolean part3 = false;
+        int datasetNumber = 1;
         if (args.length > 0) {
             videopath = args[0];
         }
@@ -641,9 +641,13 @@ public class AudioVideoProcessor {
             audioout = args[3];
         }
         if (args.length > 4) {
-            part3 = true;
+            datasetNumber = Integer.parseInt(args[4]);
         }
         
+        System.out.println("Processing videos " + aviAudios[datasetNumber-1]);
+        System.out.println("Brand Image " + brandImages[datasetNumber-1]);
+        
+        System.out.println(" Processing Dataset number " + datasetNumber);
         //Get shots from video by analyzing video and audio
         System.out.println("Analyzing Video for shots...");
         Shot[] shots = analyzeVideo(videopath);
@@ -727,11 +731,9 @@ public class AudioVideoProcessor {
             System.out.println("Shot: " + s.start + "-" + s.end + ", " + s.category.name());
         }
         
-        
-       XuggleVideo video = new XuggleVideo(new File(aviAudios[2]));
-        LinkedList<String> logoDetectedList = FrameAnalyzer.detectLogos(video, 0.07f, brandImages[0]);
-        logoDetectedList.add("hard rock live");
-        logoDetectedList.add("american eagle");
+       
+        XuggleVideo video = new XuggleVideo(new File(aviAudios[datasetNumber-1]));
+        LinkedList<String> logoDetectedList = FrameAnalyzer.detectLogos(video, 0.07f, "/Users/mukesh/Downloads/dataset3/BrandImages/");
         logoDetectedList.stream().forEach(x->{
             System.out.println("Logo received  "+ x);
         });
