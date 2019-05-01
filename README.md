@@ -17,7 +17,10 @@ Some other MultiMedia concepts like motion compensation, entropy change
 ## Testing Audio Video Sycn code 
 
 ```C++
-javac *java 
+mvn install
+mvn clean compile
+mvn clean package 
+
 ```
 > Run Audio Video Sync
 ```C++
