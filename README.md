@@ -1,6 +1,21 @@
-# FinalProject
-CSCI576 Final Project
-# Testing Audio Video Sycn code 
+# CSCI576 Final Project
+					Credits : Our hard work :)	
+
+## Problem Statement
+> Design an  develope a System to automatically remove advertisements from the video (and corresponding audio) which is interspersed with advertisements. Furthermore, design a process based on specific brand images to detect the brand in the video and if present, replace the original advertisement with a corresponding topical advertisement.
+
+1. Remove ads from Video
+2. Replace ads with relevant ads which are determined by the logos detections from the video
+
+## API and Algorithms:
+1. Google Vision [https://cloud.google.com/vision/]
+2. OpemImaj [http://openimaj.org/]
+3. Javax Sound 
+4. XuggleVideo
+Some other MultiMedia concepts like motion compensation, entropy change
+
+## Testing Audio Video Sycn code 
+
 ```C++
 javac *java 
 ```
@@ -14,12 +29,9 @@ java Player  ~/Downloads/Subway_Ad_15s.rgb ~/Downloads/Subway_Ad_15s.wav
 java AudioVideoProcessor /Users/mukesh/Downloads/dataset/Videos/data_test3.rgb /Users/mukesh/Downloads/dataset/Videos/data_test3.wav  /Users/mukesh/Downloads/dataset/Videos/video3.rgb /Users/mukesh/Downloads/dataset/Videos/audio3.wav
 ```
 
-
 ## Motivation 
 > There is an increased amount of video and audio content broadcast and streamed everywhere today. Such content needs to be frequently analyzed for a variety of reasons and applications – such as searching, indexing, summarizing, etc. One general area is in modifying content is to remove/replace specific parts of frames or even a number of frames altogether
 
-## Problem Statement
-> Design an algorithm to automatically remove advertisements from the video (and corresponding audio) which is interspersed with advertisements. Furthermore, design a process based on specific brand images to detect the brand in the video and if present, replace the original advertisement with a corresponding topical advertisement.
 
 ## Keywords
 • Frame: a single still image from a video, eg NTSC - 30 frames/second, film – 24frames/second
@@ -37,7 +49,7 @@ Here is a list to give you an idea of concrete tasks that your project needs to 
 6. If brands are detected, replace the old advertisement with a new advertisement to
 write out the new video/audio file.
 
-## TA Note
+## Note
 You are welcome to use any language you feel familiar for this project.
 
 About the RefrenceCode folder:
