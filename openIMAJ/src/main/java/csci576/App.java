@@ -3,6 +3,7 @@ package csci576;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.List;
 
 import javax.sound.sampled.UnsupportedAudioFileException;
@@ -41,12 +42,26 @@ public class App {
 	
     public static void main( String[] args ) throws Exception {
 
-    	XuggleVideo video = new XuggleVideo(new File("/Users/skalli93/Desktop/USC Documents/CSCI576/finalProject/dataset/Videos/data_test1_cmp.avi"));
     	//XuggleVideo video = new XuggleVideo(new File("/Users/skalli93/Desktop/USC Documents/CSCI576/finalProject/dataset/Videos/data_test1_cmp.avi"));
     	
+    	//XuggleVideo video = new XuggleVideo(new File("/Users/skalli93/Desktop/USC Documents/CSCI576/finalProject/dataset/Videos/data_test1_cmp.avi"));
     	
-    	List<Shot> shotList = FrameAnalyzer.detectShotBoundaries(video, 0.07f, 5, false);
+    	XuggleVideo video = new XuggleVideo(new File("/Users/skalli93/Desktop/USC Documents/CSCI576/finalProject/dataset3/Videos/data_test3_cmp.avi"));
+
+    	//List<Shot> shotList = FrameAnalyzer.detectShotBoundaries(video, 0.07f, 5, false);
+		LinkedList<String> logos = FrameAnalyzer.detectLogos(video, 0.07f);
+    	
+    	//String videoPath = "/Users/skalli93/Desktop/USC Documents/CSCI576/finalProject/dataset3/Videos/data_test3.rgb";
+//		LinkedList<String> logos = FrameAnalyzer.detectLogoMukSkalKay(videoPath, 20);
+//		
+//		  Object[] array = logos.toArray();
+//			
+//		  // print the array
+//		  for (int i = 0; i < logos.size(); i++) {
+//		     System.out.println("Logos for this shot:" + array[i]);
+//		  }
 		
+		/*
     	System.out.println("Final List: ");
     	for (Shot shot : shotList) {
     		System.out.println("EndFrameNo: " + shot.getEndFrameNumber() + ", framesInBetween: " + shot.getShotLength() + ", MSD: " + shot.getMSD() 
@@ -71,7 +86,7 @@ public class App {
     	
 //    	for (MBFImage mbfImage : video) {
 //    	    DisplayUtilities.displayName(mbfImage.process(new CannyEdgeDetector()), "videoFrames");
-//    	}
+//    	}*/
     	
     }
 }

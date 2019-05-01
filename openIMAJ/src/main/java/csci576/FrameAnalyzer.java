@@ -1,13 +1,18 @@
 package csci576;
 
+import java.awt.image.BufferedImage;
+import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
 
+import javax.imageio.ImageIO;
 import javax.sound.sampled.AudioFormat;
 import javax.sound.sampled.AudioInputStream;
 import javax.sound.sampled.AudioSystem;
@@ -108,7 +113,118 @@ public class FrameAnalyzer {
 		return meanVal;
 
 	}
+	
+	
+	public static LinkedList<String> detectLogos(XuggleVideo video, float threshold) throws Exception{
+		
 
+		// Get the first frame
+		MBFImage lastFrame = video.getNextFrame();
+		FImage last = lastFrame.flatten();
+
+		// Initialize frame count
+		int lastFrameNo = 0;
+		float currentFrameNo = 1;
+
+		// Initialize output list
+		LinkedList<String> outputList = new LinkedList<String>();
+		
+//		LogoDetection ld = new LogoDetection();
+//		List<String> logos = ld.run();
+
+		long numOfFrames = video.countFrames();
+		
+		
+		// Iterate through the frames
+		for (MBFImage currentFrame : video) {
+			if(currentFrameNo == 8399) {
+				break;
+			}
+		
+			final FImage current = currentFrame.flatten();
+
+		
+			if (currentFrameNo % 20 == 0) {
+				//Call Logo detector here 
+				//System.out.println("20th frame!!!");
+				File outputFile = new File("/Users/skalli93/Desktop/temp.jpg");
+				ImageUtilities.write(current, "JPG", outputFile);
+				ByteString byteString = ByteString.readFrom(new FileInputStream(outputFile));
+				
+				outputList.addAll(LogoDetection.matchLogoToImage(null, System.out, byteString));
+			}
+			
+			
+			//System.out.println(lastFrameNo + " out of " + numOfFrames + " frames" );
+			
+			// Set the current frame to the last frame
+			last = current;
+			lastFrame = currentFrame;
+			lastFrameNo++;
+			currentFrameNo++;
+
+		}
+		  Object[] array = outputList.toArray();
+		
+		  // print the array
+		  for (int i = 0; i < outputList.size(); i++) {
+		     System.out.println("Logos for this shot:" + array[i]);
+		  }
+	return outputList;		
+	}
+	
+
+//	public static LinkedList<String> detectLogoMukSkalKay(String videoPath, float threshold) throws Exception{
+//
+//		// Initialize output list
+//		LinkedList<String> outputList = new LinkedList<String>();
+//
+//		File f = new File(videoPath);
+//        InputStream videoStream = new FileInputStream(f);
+//        try {
+//        	int WIDTH = 480;
+//    		int HEIGHT = 270;
+//    		int lengh = 3 * WIDTH * HEIGHT;
+//    		int numRead =0;
+//    		int frame =1;
+//            byte bytes[] = new byte[lengh];
+//            
+//            for(frame =1; numRead !=-1; ++frame) {
+//	            int offset = 0;
+//	            while (offset < lengh && (numRead = videoStream.read(bytes, offset, lengh - offset)) >= 0) {
+//	                offset = offset + numRead;
+//	            }
+//	            
+//				if (frame % threshold == 20) {
+//
+//					File outputFile = new File("/Users/skalli93/Desktop/temp.jpg");
+//					//BufferedImage bufferedBytes = ImageIO.read(new ByteArrayInputStream(bytes));
+//					//ImageIO.write(bufferedBytes, "JPEG", outputFile);
+//					MBFImage mbfImage = new MBFImage(WIDTH, HEIGHT);
+//	                mbfImage.internalAssign(bytes, WIDTH, HEIGHT);
+//	                ImageUtilities.write(mbfImage, outputFile);
+//					ByteString byteString = ByteString.readFrom(new FileInputStream(outputFile));
+//					outputList.addAll(LogoDetection.matchLogoToImage(null, System.out, byteString));
+//					
+//					System.out.println(frame);
+//					
+//					
+//				}
+//				
+//            }
+//          
+//        } catch (IOException e) {
+//            e.printStackTrace();
+//  
+//        }
+//	  
+//	  return outputList;
+//	  
+//	}
+//	
+
+	
+	
 	/*
 	 * Method that will determine where the shot boundaries. It uses MSD and
 	 * histograms to compare to a threshold.
@@ -137,9 +253,8 @@ public class FrameAnalyzer {
 
 		// Initialize output list
 		List<Shot> outputList = new ArrayList<Shot>();
-		LogoDetection ld = new LogoDetection();
-		List<String> logos = ld.run();
-		
+		//LogoDetection ld = new LogoDetection();
+		//List<String> logos = ld.run();
 		// Iterate through the frames
 		for (final MBFImage currentFrame : video) {
 			final FImage current = currentFrame.flatten();
@@ -158,7 +273,7 @@ public class FrameAnalyzer {
 				
 				//byte[] currentBytes = currentFrame.toByteImage();
 				//ByteString byteString = ByteString.copyFrom(currentBytes);
-				LogoDetection.matchLogoToImage(null, System.out, logos, byteString);
+				//LinkedList<String> logos = LogoDetection.matchLogoToImage(null, System.out, byteString);
 			}
 			
 			

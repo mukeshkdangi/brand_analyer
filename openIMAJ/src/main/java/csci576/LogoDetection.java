@@ -10,6 +10,7 @@ import javax.imageio.ImageIO;
 import java.io.FileInputStream;
 import java.io.PrintStream;
 import java.util.ArrayList;
+import java.util.LinkedList;
 
 import com.google.cloud.vision.v1.*;
 import com.google.cloud.vision.v1.Feature.Type;
@@ -51,9 +52,9 @@ public class LogoDetection
 		    }
 		  }
 	  
-	  public static List<String> matchLogoToImage(String filePath, PrintStream out, List<String> logos, ByteString imgBytes) throws Exception, IOException {
+	  public static LinkedList<String> matchLogoToImage(String filePath, PrintStream out, ByteString imgBytes) throws Exception, IOException {
 		   List<AnnotateImageRequest> requests = new ArrayList<>();
-		   List<String> matched = new ArrayList<>();
+		   LinkedList<String> matched = new LinkedList<>();
 		   
 		   //ByteString imgBytes = ByteString.readFrom(new FileInputStream(filePath));
 		   //ByteString imgBytes = ByteString.readFrom(img);
@@ -88,19 +89,20 @@ public class LogoDetection
 				      for (AnnotateImageResponse res : responses) {
 				        if (res.hasError()) {
 				          out.printf("Error: %s\n", res.getError().getMessage());
-				          return new ArrayList<>();
+				          return new LinkedList<>();
 				        }
 
 				        // For full list of available annotations, see http://g.co/cloud/vision/docs
 				        for (EntityAnnotation annotation : res.getLogoAnnotationsList()) {
 				        	String description = annotation.getDescription();
 				        	System.out.println("img detected... " + annotation.getDescription());
-				        	for(int i = 0; i < logos.size(); i++) {
+				        	matched.add(description);
+				        	/*for(int i = 0; i < logos.size(); i++) {
 				        		String logo = logos.get(i);
 				        		if(description.contains(logo) || logo.contains(description)) {
 				        			matched.add(logo);
 				        		}
-				        	}
+				        	}*/
 				        }
 				        
 				      }
